@@ -13,11 +13,11 @@ import {
   Request,
   UseGuards,
 } from '@nestjs/common';
-import { PostService } from './post.service';
-import { CreatePostDto } from './dto/create-post.dto';
-import { Role } from '@prisma/client';
+import { PostsService } from './posts.service';
 import { JwtAuthGuard } from '@/auth/guards/jwt-auth.guard';
+import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
+import { Role } from '@prisma/client';
 
 interface JwtUser {
   userId: number;
@@ -30,8 +30,8 @@ interface RequestWithUser extends Request {
 }
 
 @Controller('posts')
-export class PostController {
-  constructor(private readonly postService: PostService) {}
+export class PostsController {
+  constructor(private readonly postService: PostsService) {}
 
   @Get()
   async getAllPosts(

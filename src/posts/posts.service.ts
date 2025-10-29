@@ -1,11 +1,11 @@
 import { PrismaService } from '@/prisma/prisma.service';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { Post, Prisma } from '@prisma/client';
-import { CreatePostDto } from './dto/create-post.dto';
-import { UpdatePostDto } from './dto/update-post.dto';
+import { CreatePostDto } from '../posts/dto/create-post.dto';
+import { UpdatePostDto } from '../posts/dto/update-post.dto';
 
 @Injectable()
-export class PostService {
+export class PostsService {
   constructor(private readonly prisma: PrismaService) {}
 
   async getAllPosts(): Promise<Post[]> {
