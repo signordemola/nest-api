@@ -1,8 +1,8 @@
 import { UserService } from '@/user/user.service';
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { ValidatedUser } from './local.strategy';
 import * as bcrypt from 'bcrypt';
+import { ValidatedUser } from './strategies/local.strategy';
 
 @Injectable()
 export class AuthService {
@@ -27,11 +27,12 @@ export class AuthService {
     return {
       userId: user.id,
       name: user.name,
+      roles: user.roles,
     };
   }
 
   async login(user: ValidatedUser) {
-    const payload = { name: user.name, sub: user.userId };
+    const payload = { name: user.name, sub: user.userId, roles: user.roles };
 
     const access_token = await this.jwtService.signAsync(payload);
 
@@ -40,6 +41,7 @@ export class AuthService {
       user: {
         id: user.userId,
         name: user.name,
+        roles: user.roles,
       },
     };
   }

@@ -21,7 +21,7 @@ export class UserService {
         name: true,
         username: true,
         email: true,
-        role: true,
+        roles: true,
         createdAt: true,
         updatedAt: true,
       },
@@ -48,9 +48,18 @@ export class UserService {
 
   async findUser(
     userWhereUniqueInput: Prisma.UserWhereUniqueInput,
-  ): Promise<User | null> {
+  ): Promise<Omit<User, 'password'> | null> {
     return this.prisma.user.findUnique({
       where: userWhereUniqueInput,
+      select: {
+        id: true,
+        name: true,
+        username: true,
+        email: true,
+        roles: true,
+        createdAt: true,
+        updatedAt: true,
+      },
     });
   }
 

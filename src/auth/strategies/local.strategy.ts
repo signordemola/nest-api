@@ -1,11 +1,12 @@
 import { Strategy } from 'passport-local';
 import { PassportStrategy } from '@nestjs/passport';
 import { Injectable, UnauthorizedException } from '@nestjs/common';
-import { AuthService } from './auth.service';
+import { AuthService } from '../auth.service';
 
 export interface ValidatedUser {
   userId: number;
   name: string;
+  roles: string[];
 }
 
 @Injectable()
