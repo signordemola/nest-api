@@ -1,98 +1,246 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# NestJS API Core
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+## Overview
+A high-performance backend architecture built with NestJS and Prisma ORM. This system implements a modular design to handle user authentication, role-based access control, and a relational content structure for posts and comments.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## Features
+- NestJS: Modular architecture for scalable server-side applications.
+- Prisma: Type-safe database client and automated migration management.
+- Passport.js: Multi-strategy authentication (Local & JWT).
+- PostgreSQL: Relational data storage for complex entity relationships.
+- Class Validator: Robust request body validation and data sanitization.
 
-## Description
+## Getting Started
+### Installation
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/signordemola/nest-api.git
+   ```
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+3. Initialize the database:
+   ```bash
+   npx prisma migrate dev
+   ```
+4. Start the application:
+   ```bash
+   npm run start:dev
+   ```
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
-
-## Project setup
-
-```bash
-$ npm install
+### Environment Variables
+Configure the following variables in a `.env` file at the project root:
+```text
+DATABASE_URL="postgresql://user:password@localhost:5432/nest_db?schema=public"
+JWT_SECRET="your_secure_random_string_here"
+PORT=3000
 ```
 
-## Compile and run the project
+## API Documentation
+### Base URL
+`http://localhost:3000`
 
-```bash
-# development
-$ npm run start
+### Endpoints
 
-# watch mode
-$ npm run start:dev
+#### POST /auth/register
+**Request**:
+```json
+{
+  "name": "John Doe",
+  "email": "john@example.com",
+  "password": "Password123",
+  "username": "johndoe"
+}
+```
+**Response**:
+```json
+{
+  "message": "Registration successful!"
+}
+```
+**Errors**:
+- 409: Email already in use!
 
-# production mode
-$ npm run start:prod
+#### POST /auth/login
+**Request**:
+```json
+{
+  "email": "john@example.com",
+  "password": "Password123"
+}
+```
+**Response**:
+```json
+{
+  "message": "Login successful",
+  "access_token": "eyJhbGciOi...",
+  "user": {
+    "id": 1,
+    "name": "John Doe",
+    "roles": ["USER"]
+  }
+}
+```
+**Errors**:
+- 401: Invalid credentials
+
+#### GET /profile
+**Request**:
+- Header: `Authorization: Bearer <token>`
+**Response**:
+```json
+{
+  "id": 1,
+  "name": "John Doe",
+  "username": "johndoe",
+  "email": "john@example.com",
+  "roles": ["USER"],
+  "createdAt": "2023-10-27T10:00:00Z",
+  "updatedAt": "2023-10-27T10:00:00Z"
+}
 ```
 
-## Run tests
-
-```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
+#### GET /users
+**Request**:
+- Header: `Authorization: Bearer <token>` (Admin Only)
+**Response**:
+```json
+[
+  {
+    "id": 1,
+    "name": "John Doe",
+    "email": "john@example.com",
+    "roles": ["USER"]
+  }
+]
 ```
 
-## Deployment
-
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
-
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
-
-```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
+#### GET /posts
+**Request**:
+- Query Params: `tag` (optional), `authorId` (optional)
+**Response**:
+```json
+[
+  {
+    "id": 1,
+    "title": "Project Update",
+    "content": "Description here",
+    "author": { "id": 1, "name": "John Doe" },
+    "tags": [{ "id": 1, "name": "tech" }],
+    "_count": { "comments": 5 }
+  }
+]
 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+#### POST /posts
+**Request**:
+- Header: `Authorization: Bearer <token>`
+```json
+{
+  "title": "New Post",
+  "content": "Post body content",
+  "tags": ["nodejs", "nestjs"]
+}
+```
+**Response**:
+```json
+{
+  "message": "Post created successfully"
+}
+```
 
-## Resources
+#### PATCH /posts/:id
+**Request**:
+- Header: `Authorization: Bearer <token>`
+```json
+{
+  "title": "Updated Title"
+}
+```
+**Response**:
+```json
+{
+  "message": "Post with the title: 1 updated successfully!"
+}
+```
 
-Check out a few resources that may come in handy when working with NestJS:
+#### DELETE /posts/:id
+**Request**:
+- Header: `Authorization: Bearer <token>`
+**Response**:
+```json
+{
+  "message": "Post deleted successfully!"
+}
+```
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+#### POST /posts/:postId/comments
+**Request**:
+- Header: `Authorization: Bearer <token>`
+```json
+{
+  "content": "This is a comment"
+}
+```
+**Response**:
+```json
+{
+  "message": "Comment added successfully!"
+}
+```
 
-## Support
+#### PATCH /posts/:postId/comments/:commentId
+**Request**:
+- Header: `Authorization: Bearer <token>`
+```json
+{
+  "content": "Updated comment content"
+}
+```
+**Response**:
+```json
+{
+  "message": "Comment updated successfully!"
+}
+```
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+#### DELETE /posts/:postId/comments/:commentId
+**Request**:
+- Header: `Authorization: Bearer <token>`
+**Response**:
+```json
+{
+  "message": "Comment deleted successfully!"
+}
+```
 
-## Stay in touch
+## Technologies Used
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+| Technology | Purpose | Link |
+| :--- | :--- | :--- |
+| NestJS | Backend Framework | [https://nestjs.com/](https://nestjs.com/) |
+| Prisma | ORM | [https://www.prisma.io/](https://www.prisma.io/) |
+| Passport | Authentication | [http://www.passportjs.org/](http://www.passportjs.org/) |
+| TypeScript | Language | [https://www.typescriptlang.org/](https://www.typescriptlang.org/) |
+| PostgreSQL | Database | [https://www.postgresql.org/](https://www.postgresql.org/) |
 
-## License
+## Contributing
+- Fork the repository.
+- Create a feature branch: `git checkout -b feature/new-feature`.
+- Commit changes: `git commit -m 'Add new feature'`.
+- Push to the branch: `git push origin feature/new-feature`.
+- Submit a Pull Request.
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+## Author
+**Signordemola**
+- GitHub: [signordemola](https://github.com/signordemola)
+- LinkedIn: [Placeholder]
+- Twitter: [Placeholder]
+
+![NestJS](https://img.shields.io/badge/nestjs-%23E0234E.svg?style=for-the-badge&logo=nestjs&logoColor=white)
+![Prisma](https://img.shields.io/badge/Prisma-3982CE?style=for-the-badge&logo=Prisma&logoColor=white)
+![TypeScript](https://img.shields.io/badge/typescript-%23007ACC.svg?style=for-the-badge&logo=typescript&logoColor=white)
+![PostgreSQL](https://img.shields.io/badge/postgres-%23316192.svg?style=for-the-badge&logo=postgresql&logoColor=white)
+
+[![Readme was generated by Dokugen](https://img.shields.io/badge/Readme%20was%20generated%20by-Dokugen-brightgreen)](https://www.npmjs.com/package/dokugen)
